@@ -84,6 +84,7 @@ class Sensor:
             v = self.get_http(4586, 1)
 
         self.post_http(4589, payload={"value": [0]}, subindex=1)
+        freq_incr = bytes_to_float32(self.get_http(4586, 5))
 
         spectrum = []
         for i in range(37):
@@ -94,7 +95,7 @@ class Sensor:
 
         self.post_http(4585, payload={"value": [0]})
 
-        return {"spectrum": spectrum}
+        return {"spectrum": spectrum, "freq_incr": freq_incr}
 
     def get_sensor_raw():
         return
