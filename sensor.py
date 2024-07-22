@@ -1,7 +1,7 @@
 import requests
 import json
 from typing import Dict, Any, Tuple
-from conversion import bytes_to_float32
+from conversion import bytes_to_float32, bytes_to_int16
 
 
 class Sensor:
@@ -84,16 +84,20 @@ class Sensor:
             v = self.get_http(4586, 1)
 
         self.post_http(4589, payload={"value": [0]}, subindex=1)
+        nr_of_segments = self.get_http(4586, 3)[0]
+        nr_of_valid_points = bytes_to_int16(self.get_http(4586, 2))
         freq_incr = bytes_to_float32(self.get_http(4586, 5))
 
         spectrum = []
-        for i in range(37):
+        for i in range(nr_of_segments):
             data = self.get_http(4590)
             for i in range(0, len(data), 4):
                 res = bytes_to_float32(data[i:i+4])
                 spectrum.append(res)
+        spectrum = spectrum[:nr_of_valid_points]
 
         self.post_http(4585, payload={"value": [0]})
+        print(len(spectrum))
 
         return {"spectrum": spectrum, "freq_incr": freq_incr}
 

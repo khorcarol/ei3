@@ -14,3 +14,16 @@ def bytes_to_float32(byte_list):
     float_value = struct.unpack('>f', byte_data)[0]
 
     return float_value
+
+
+def bytes_to_int16(byte_list):
+
+    if len(byte_list) != 2:
+        raise ValueError("Input must be a list of exactly two bytes.")
+
+    # Extract the two bytes
+    byte1, byte2 = byte_list
+
+    # Combine the bytes using bitwise operations
+    result = (byte1 << 8) | byte2
+    return result

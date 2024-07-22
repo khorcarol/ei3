@@ -4,7 +4,7 @@ import os
 import datetime
 import time
 from sensor import Sensor
-# Assuming feature_extraction.py exists
+
 
 
 class DataAcquisition:
