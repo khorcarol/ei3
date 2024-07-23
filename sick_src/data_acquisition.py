@@ -3,12 +3,13 @@ import json
 import os
 import datetime
 import time
-
+import queue
 
 class DataAcquisition:
   """
   A class for acquiring data from a sensor, extracting features, and writing data to a local file.
   """
+
 
   def __init__(self, sensor, sampling_rate, db, data_dir:str="data"):
     self.sensor = sensor #Sensor object
@@ -17,6 +18,7 @@ class DataAcquisition:
     self.db = db #Database object
     self.running = False
     self.thread = None
+    self.queue = queue.Queue()
 
     os.makedirs(self.data_dir, exist_ok=True)
 
@@ -79,6 +81,7 @@ class DataAcquisition:
     """
     self.db.create_tables()
     data_id = self.db.insert_raw_data(data)
+    self.queue.put(data_id)
 
 
 # if __name__ == "__main__":

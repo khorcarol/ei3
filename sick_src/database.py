@@ -54,15 +54,7 @@ class DBConnection:
         self.conn.commit()
 
     def insert_raw_data(self, data: Dict[str, List]) -> int:
-        """
-        Inserts raw data into the 'Raw_data' table.
 
-        Args:
-            data: Dictionary containing the raw data with keys matching table columns.
-
-        Returns:
-            The ID of the inserted raw data entry.
-        """
         cursor = self.cursor
         timestamp = data["timestamp"]
         del data["timestamp"]
@@ -75,6 +67,36 @@ class DBConnection:
         data_id = cursor.lastrowid
 
         return data_id
+    
+    def update_raw_data(self, data_id: int, features: Dict[str, List]) -> bool:
+
+        cursor = self.cursor
+        update_query = f"UPDATE Raw_data SET features = ? WHERE data_id = {data_id}"
+
+        parameters = [json.dumps(features)]
+
+        try:
+            cursor.execute(update_query, parameters)
+            self.conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(f"Error updating features: {e}")
+            return False
+
+
+    def fetch_features(self, data_id: int) -> Dict[str, Union[str, float, int]]:
+        cursor = self.cursor
+        cursor.execute(
+            f"SELECT features FROM Raw_data WHERE data_id = {data_id}")
+        features_json = cursor.fetchone()[0]
+        features = json.loads(features_json)
+        return features
+    
+    def set_processed_flag(self, data_id:int):
+        cursor = self.cursor
+        cursor.execute(
+            f"UPDATE Raw_data SET flag = 1 WHERE data_id = {data_id}")
+        self.conn.commit()
 
     def insert_inference(self):
        return
@@ -91,6 +113,8 @@ def main():
         "flag": 1
     }
     data_id = db.insert_raw_data(raw_data)
+    f = db.fetch_features(data_id)
+    print(f)
 
 
 if __name__ == "__main__":
