@@ -1,0 +1,8 @@
+[project]
+name = "SICK"
+version = "0.1"
+
+
+dependencies = [
+    "commonmark == 0.9.1"
+]
