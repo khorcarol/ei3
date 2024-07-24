@@ -6,13 +6,7 @@ import sqlite3
 
 
 class DBConnection:
-    instance = None  # global instance of database object
 
-    def __new__(self, *args, **kwargs):
-        if self.instance is None:
-            self.instance = super().__new__(DBConnection)
-            return self.instance
-        return self.instance
 
     def __init__(self, db_name='data/data.db'):
         self.name = db_name

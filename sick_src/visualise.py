@@ -57,7 +57,7 @@ def spectogram_plot(
     return fig
 
 
-def real_time_spectrogram(db, limit = 10):
+def real_time_spectrogram(db, limit = 50):
     fig, ax = plt.subplots()
     im = ax.pcolormesh([0], [0], [[0]], shading="nearest")
     cb =fig.colorbar(im)
