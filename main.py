@@ -1,7 +1,8 @@
 from sick_src import visualise
-from sick_src import sensor, data_acquisition, database, feature_processing
+from sick_src import sensor, data_acquisition, database, feature_processing, inference
 from threading import Thread
 import time
+from model import one_class_svm
 
 
 sensor_obj = sensor.Sensor(ip_address="cogsihq.dyndns.org:8000")
@@ -14,13 +15,17 @@ data_acquisitio_obj = data_acquisition.DataAcquisition(
     sensor_obj, sampling_rate, db, data_dir)
 data_acquisitio_obj.start_acquisition()
 
-consumer_thread = Thread(target=feature_processing.run,
+feature_processing_obj = feature_processing.FeatureProcessor()
+feature_processing_thread = Thread(target=feature_processing_obj.run,
                          args=(db, data_acquisitio_obj.queue,))
-consumer_thread.start()
+feature_processing_thread.start()
 
-# from visualisation import real_time_features,real_time_spectrogram
-# real_time_features('data')
-# real_time_spectrogram('data')
+
+model = one_class_svm.OneClassSVMDetector()
+inference.batch_train(db, model)
+inference_thread = Thread(target=inference.run, args=(
+    db, model, feature_processing_obj.queue,))
+inference_thread.start()
 
 # visualise.real_time_features(db)
 visualise.real_time_spectrogram(db)

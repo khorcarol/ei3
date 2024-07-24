@@ -96,8 +96,6 @@ class Sensor:
         spectrum = spectrum[:nr_of_valid_points]
 
         self.post_http(4585, payload={"value": [0]})
-        print(len(spectrum))
-
         return {"spectrum": spectrum, "freq_incr": freq_incr}
 
     def get_sensor_raw():

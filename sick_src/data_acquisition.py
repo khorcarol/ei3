@@ -81,6 +81,8 @@ class DataAcquisition:
     """
     self.db.create_tables()
     data_id = self.db.insert_raw_data(data)
+
+    print(f"DataAcquisiton Producer produced data_id: {data_id}")
     self.queue.put(data_id)
 
 
