@@ -92,6 +92,16 @@ class DBConnection:
         features = json.loads(features_json)
         return features
     
+    def fetch_last_n_processed_features(self, limit:int):
+        cursor = self.cursor
+        cursor.execute(f"""
+        SELECT features FROM Raw_data WHERE flag = 1 ORDER BY data_id DESC LIMIT {limit}
+        """)
+        features_json = cursor.fetchall()
+        features = [json.loads(data[0]) for data in features_json]
+        return features[::-1]  # Reverse to get most recent first
+
+    
     def set_processed_flag(self, data_id:int):
         cursor = self.cursor
         cursor.execute(
@@ -113,7 +123,7 @@ def main():
         "flag": 1
     }
     data_id = db.insert_raw_data(raw_data)
-    f = db.fetch_features(data_id)
+    f = db.fetch_last_n_processed_features(3)
     print(f)
 
 
