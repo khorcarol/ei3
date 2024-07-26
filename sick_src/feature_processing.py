@@ -1,16 +1,16 @@
 import queue
-"""
-Feature processing,
 
-Feature ranking
-
-"""
 class FeatureProcessor:
 
     def __init__(self):
         self.queue = queue.Queue()
 
     def run(self, db, queue):
+        '''
+        Consumer of the DataAcquisition queue. Processes the features, updates database,
+        and puts into its own queue for downstream inference consumer.
+        '''
+
         while True:
             data_id = queue.get()
             print(f"Feature Processor Consumer received data_id: {data_id}") 
@@ -30,5 +30,5 @@ class FeatureProcessor:
         
             self.queue.put(data_id)
         
-    def filter_spectrum(self, spectrum_data, min=100, max=200):
+    def filter_spectrum(self, spectrum_data, min=100, max=1000):
         return [spectrum_data[i] for i in range(len(spectrum_data)) if i <= max and i >= min]

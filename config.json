@@ -1,8 +1,20 @@
-{"sensor1":
+{
+  "sensors": [
+    {
+      "name": "SICK Sensor",
+      "ip": "cogsihq.dyndns.org:8000",
+      "id" : 1
+    }
+  ],
 
-{"ip": 
+  "models": [
+    {
+      "id": "101010",
+      "type": "svm",
+      "parameters": {
+        "kernel": "rbf",
+        "nu": 0.1
+      }
+    }
+  ]
 }
-
-}
-
-{}

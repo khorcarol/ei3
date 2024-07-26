@@ -4,106 +4,80 @@ import os
 import datetime
 import time
 import queue
+import sick_src.sensor as sensor
+import sick_src.database as database
+
 
 class DataAcquisition:
-  """
-  A class for acquiring data from a sensor, extracting features, and writing data to a local file.
-  """
-
-
-  def __init__(self, sensor, sampling_rate, db, data_dir:str="data"):
-    self.sensor = sensor #Sensor object
-    self.sampling_rate = sampling_rate
-    self.data_dir = data_dir
-    self.db = db #Database object
-    self.running = False
-    self.thread = None
-    self.queue = queue.Queue()
-
-    os.makedirs(self.data_dir, exist_ok=True)
-
-  def start_acquisition(self):
     """
-    Starts the data acquisition thread.
+    A class for acquiring data from a sensor and writing data to a local file and database.
+    Producer of queue for downstream feature_processing consumer.
     """
-    if self.running:
-      print("Data acquisition already running.")
-      return
 
-    self.running = True
-    self.thread = threading.Thread(target=self._acquisition_loop)
-    self.thread.start()
+    def __init__(self, sensor: sensor.Sensor, sampling_rate, db: database.DBConnection, data_dir: str = "data"):
+        self.sensor = sensor  # Sensor object
+        self.sampling_rate = sampling_rate
+        self.data_dir = data_dir
+        self.db = db  # Database object
+        self.running = False
+        self.thread = None
+        self.queue = queue.Queue()
 
-  def stop_acquisition(self):
-    """
-    Stops the data acquisition thread.
-    """
-    if not self.running:
-      print("Data acquisition not running.")
-      return
+        os.makedirs(self.data_dir, exist_ok=True)
 
-    self.running = False
-    self.thread.join()  # Wait for the thread to finish
+    def start_acquisition(self):
+        """
+        Starts the data acquisition thread.
+        """
+        if self.running:
+            print("Data acquisition already running.")
+            return
 
-  def _acquisition_loop(self):
-    """
-    Internal loop that continuously reads data from the sensor, records the time, and writes them to a file and database.
-    """
-    while self.running:
-      data = self.sensor.get_sensor_data()
-      timestamp = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-      data["timestamp"] = timestamp
+        self.running = True
+        self.thread = threading.Thread(target=self._acquisition_loop)
+        self.thread.start()
 
-      filename = f"{timestamp}.json"
-      filepath = os.path.join(self.data_dir, filename)
+    def stop_acquisition(self):
+        """
+        Stops the data acquisition thread.
+        """
+        if not self.running:
+            print("Data acquisition not running.")
+            return
 
-      self._write_data_to_file(filepath, data)
-      self._write_data_to_db(data)
-      
-      time.sleep(1 / self.sampling_rate)
+        self.running = False
+        self.thread.join()  # Wait for the thread to finish
 
-  def _write_data_to_file(self, filepath, data):
-    """
-    Writes data to a JSON file.
+    def _acquisition_loop(self):
+        """
+        Internal loop that continuously reads data from the sensor, records the time, and writes them to a file and database.
+        """
+        while self.running:
+            data = self.sensor.get_sensor_data()
+            timestamp = str(
+                datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+            data["timestamp"] = timestamp
 
-    Args:
-        filepath: The path to the file to write data to.
-        data: A dictionary containing sensor data and other features.
-    """
-    with open(filepath, "w") as f:
-      json.dump(data, f, indent=4)
+            filename = f"{timestamp}.json"
+            filepath = os.path.join(self.data_dir, filename)
 
-  def _write_data_to_db(self, data):
-    """
-    Writes data to a database.
-    Args:
-      data: A dictionary contianing sensor data and other features.
-    """
-    self.db.create_tables()
-    data_id = self.db.insert_raw_data(data)
+            self._write_data_to_file(filepath, data)
+            self._write_data_to_db(data)
 
-    print(f"DataAcquisiton Producer produced data_id: {data_id}")
-    self.queue.put(data_id)
+            time.sleep(1 / self.sampling_rate)
 
+    def _write_data_to_file(self, filepath, data):
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=4)
 
-# if __name__ == "__main__":
-#   from database import DBConnection
-#   from sensor import Sensor # TODO: why doesn't this work?
-#   db = DBConnection()
-#   s = Sensor()
-#   d = DataAcquisition(s,db = db, sampling_rate= 1)
-#   raw_data = {
-#         "timestamp_from": time.time(),
-#         "timestamp_to": time.time() + 10,
-#         "features": {"temperature": 25.5, "pressure": 1010},
-#         # Optional flag (consider using a boolean instead of integer)
-#         "flag": 0
-#     }
+    def _write_data_to_db(self, data):
+        '''
+        Writes data acquired from sensor into Raw_data table of database and puts the 
+        data_id of the inserted row into its own finished queue.
 
-#   d._write_data_to_db(raw_data)
+        '''
+        self.db.create_tables()
+        data_id = self.db.insert_raw_data(data)
 
-
-  
-
-
-
+        print(f"DataAcquisiton Producer produced data_id: {data_id}")
+        self.queue.put(data_id)

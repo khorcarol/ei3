@@ -1,6 +1,6 @@
 import requests
 import json
-from typing import Dict, Any, Tuple, List
+from typing import Dict, Any, Tuple, List, Union
 from sick_src.conversion import bytes_to_float32, bytes_to_int16
 
 
@@ -8,7 +8,7 @@ class Sensor:
     """
     A class for interacting with sensor.
     """
-    def __init__(self, ip_address="cogsihq.dyndns.org:8000", indices={"kurtosis_X": (4495, 1),
+    def __init__(self, sensor_id, ip_address="cogsihq.dyndns.org:8000", indices={"kurtosis_X": (4495, 1),
                                                          "kurtosis_Y": (4495, 2),
                                                          "kurtosis_Z": (4495, 3),
 
@@ -49,6 +49,7 @@ class Sensor:
                                                          }):
         self.ip_address = ip_address
         self.indices = indices
+        self.id = sensor_id
 
     def post_http(self, index: int, payload, subindex=None):
         if subindex is not None:
@@ -70,13 +71,19 @@ class Sensor:
         data = r.json()
         return data["value"]
 
-    def get_sensor_data(self) -> Dict[str, List]:
+    def get_sensor_data(self) -> Dict[str, Union[List[int], int]]:
+        '''
+        Returns dictionary mapping item name to item value
+        e.g. key "spectrum" to list of values of FFT spectrum
+        e.g. key "freq_incr" to frequency increment int value
+        '''
+
         res = {}
         res.update(self.get_sensor_fft())
         res.update(self.get_sensor_features())
         return res
 
-    def get_sensor_fft(self) -> Dict[str, List]:
+    def get_sensor_fft(self) -> Dict[str, List[int]]:
         self.post_http(4585, payload={"value": [2]})
         v = [0]
         while v != [2]:
@@ -101,7 +108,7 @@ class Sensor:
     def get_sensor_raw():
         return
 
-    def get_sensor_features(self):
+    def get_sensor_features(self) -> Dict[str, int]:
         res = {}
         for key, (index, subindex) in self.indices.items():
             res[key] = bytes_to_float32(

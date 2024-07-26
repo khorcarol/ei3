@@ -6,8 +6,9 @@ import sqlite3
 
 
 class DBConnection:
-
-
+    '''
+    Class which handles all database interfacing
+    '''
     def __init__(self, db_name='data/data.db'):
         self.name = db_name
         # connect takes url, dbname, user-id, password
@@ -49,7 +50,16 @@ class DBConnection:
     """)
         self.conn.commit()
 
-    def insert_raw_data(self, data: Dict[str, List]) -> int:
+    def insert_raw_data(self, data: Dict[str, Union[List[float], float]]) -> int:
+        '''
+        Inserts new record of raw data into Raw_data table in database.
+
+        Args:
+            data    : dictionary of data label to corresponding data
+
+        Returns:
+            Integer primary key of record entered.
+        '''
 
         cursor = self.cursor
         timestamp = data["timestamp"]
@@ -64,11 +74,20 @@ class DBConnection:
 
         return data_id
 
-    def update_raw_data(self, data_id: int, features: Dict[str, List]) -> bool:
+    def update_raw_data(self, data_id: int, features: Dict[str, Union[List[float], float]]) -> bool:
+        '''
+        Updates feature column in Raw_data table in database.
+
+        Args:
+            data_id     : primary key of the row in Raw_data table that will be updated
+            features    : new features that is going to be updated
+
+        Returns:
+            Boolean value of whether the update is successful.
+        '''
 
         cursor = self.cursor
         update_query = f"UPDATE Raw_data SET features = ? WHERE data_id = {data_id}"
-
         parameters = [json.dumps(features)]
 
         try:
@@ -79,7 +98,17 @@ class DBConnection:
             print(f"Error updating features: {e}")
             return False
 
-    def fetch_features(self, data_id: int) -> Dict[str, Union[str, float, int]]:
+    def fetch_features(self, data_id: int) -> Dict[str, Union[List[float], float]]:
+        '''
+        Get feature column entry in the Raw_data table based on the data_id.
+
+        Args:
+            data_id     : primary key of the row in Raw_data table that will be fetched
+
+        Returns:
+            Feature dictionary of features.
+        '''
+
         cursor = self.cursor
         cursor.execute(
             f"SELECT features FROM Raw_data WHERE data_id = {data_id}")
@@ -87,16 +116,32 @@ class DBConnection:
         features = json.loads(features_json)
         return features
 
-    def fetch_last_n_processed_features(self, limit: int):
+    def fetch_last_n_processed_features(self, limit: int) -> List[Dict[str, Union[List[float], float]]]:
+        '''
+        Get most recent n entries in the Raw_data table.
+
+        Args:
+            limit     : number of most recent entries to fetch
+
+        Returns:
+            List  of feature dictionaries.
+        '''
+
         cursor = self.cursor
         cursor.execute(f"""
         SELECT features FROM Raw_data WHERE flag = 1 ORDER BY data_id DESC LIMIT {limit}
         """)
         features_json = cursor.fetchall()
-        features = [json.loads(data[0]) for data in features_json]
-        return features[::-1]  # Reverse to get most recent first
+        features = [json.loads(tupl[0]) for tupl in features_json]
+        return features[::-1] 
 
-    def fetch_all(self):
+    def fetch_all_to_df(self): 
+        '''
+        Fetch all in Raw_data table and returns a dataframe representation of it.
+
+        Returns:
+            Pandas dataframe of the Raw_data table
+        '''
 
         sql_query = pd.read_sql_query(
             """
@@ -112,12 +157,31 @@ class DBConnection:
         return df
 
     def set_processed_flag(self, data_id: int):
+        '''
+        Sets processed flag of row in Raw_data table.
+
+        Args:
+            data_id     : Row data_id of row to be operated on.
+
+        '''
         cursor = self.cursor
         cursor.execute(
             f"UPDATE Raw_data SET flag = 1 WHERE data_id = {data_id}")
         self.conn.commit()
 
     def insert_inference(self, feature_data_id, model_used, result):
+        '''
+        Inserts new record of inference into Inference table in database.
+        
+        Args:
+            feature_data_id     : the row id in Raw_data table which was used to make this inference
+            model_used          : string of model name TODO: change to file name?
+            result              : 0, if normal. 1, if anomalous
+
+        Returns:
+            Integer primary key of record entered.
+        '''
+
         cursor = self.cursor
 
         # Assuming data dictionary has keys matching table columns
@@ -130,21 +194,3 @@ class DBConnection:
 
 
 
-def main():
-
-    db_file = "data/data.db"
-    db = DBConnection(db_file)
-
-    db.create_tables()
-    raw_data = {
-        "timestamp": time.time(),
-        "features": {"temperature": 25.5, "pressure": 1010},
-        "flag": 1
-    }
-    data_id = db.insert_raw_data(raw_data)
-    f = db.fetch_last_n_processed_features(3)
-    print(f)
-
-
-if __name__ == "__main__":
-    main()
