@@ -9,6 +9,7 @@ class DBConnection:
     '''
     Class which handles all database interfacing
     '''
+
     def __init__(self, db_name='data/data.db'):
         self.name = db_name
         # connect takes url, dbname, user-id, password
@@ -38,6 +39,8 @@ class DBConnection:
         annotated INTEGER DEFAULT -1
       );
     """)
+        
+        
         cursor.execute("""
       CREATE TABLE IF NOT EXISTS Inference (
         inference_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,7 +58,9 @@ class DBConnection:
         Inserts new record of raw data into Raw_data table in database.
 
         Args:
-            data    : dictionary of data label to corresponding data
+            data    : dictionary of data label to corresponding data. 
+                      Includes column: timestamp ("%Y-%m-%d_%H-%M-%S"), [feature1], ...
+                      Optionally includes column: flag.
 
         Returns:
             Integer primary key of record entered.
@@ -133,9 +138,9 @@ class DBConnection:
         """)
         features_json = cursor.fetchall()
         features = [json.loads(tupl[0]) for tupl in features_json]
-        return features[::-1] 
+        return features[::-1]
 
-    def fetch_all_to_df(self): 
+    def fetch_all_to_df(self):
         '''
         Fetch all in Raw_data table and returns a dataframe representation of it.
 
@@ -156,6 +161,14 @@ class DBConnection:
                                               "annotated"])
         return df
 
+    def delete_all_raw_data(self):
+        '''Deletes all rawdata rows and associated inference rows.'''
+
+        cursor = self.cursor
+        cursor.execute(
+            f"DELETE FROM Raw_data")
+        self.conn.commit()
+
     def set_processed_flag(self, data_id: int):
         '''
         Sets processed flag of row in Raw_data table.
@@ -172,7 +185,7 @@ class DBConnection:
     def insert_inference(self, feature_data_id, model_used, result):
         '''
         Inserts new record of inference into Inference table in database.
-        
+
         Args:
             feature_data_id     : the row id in Raw_data table which was used to make this inference
             model_used          : string of model name TODO: change to file name?
@@ -191,6 +204,3 @@ class DBConnection:
       VALUES (?, ?, ?);
     """, (feature_data_id, model_used, result))
         self.conn.commit()
-
-
-

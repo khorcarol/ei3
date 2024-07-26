@@ -4,6 +4,10 @@ from threading import Thread
 import time
 from model import one_class_svm
 import json
+import os
+import sys
+
+print(sys.argv)
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -17,10 +21,11 @@ model_kernel = model_param['kernel']
 model_nu = model_param['nu']
 model_id = config['models'][0]['id']
 
-sensor_obj = sensor.Sensor(sensor_id, ip_address="cogsihq.dyndns.org:8000")
-sampling_rate = 100
+
+sensor_obj = sensor.Sensor(sensor_id, ip_address=sensor_ip)
+sampling_rate = 1000
 data_dir = "data"  # Adjust data directory if needed
-db_file = "data/data.db"
+db_file = os.path.join("data", "data.db")
 
 db_1 = database.DBConnection(db_file)
 data_acquisitio_obj = data_acquisition.DataAcquisition(
@@ -43,6 +48,6 @@ inference_thread.start()
 
 
 db_4 = database.DBConnection(db_file)
-# visualise.real_time_spectrogram(db_4)
+visualise.real_time_spectrogram(db_4)
 # visualise.real_time_features(db_4)
 

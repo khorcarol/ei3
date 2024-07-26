@@ -11,7 +11,10 @@ def batch_train(db: database.DBConnection, model: anomaly_detection.AnomalyDetec
 
     x_train = [list(json.loads(j).values())[1:]
                for j in annotated_data["features"].values]
-    model.train(x_train)
+    try:
+        model.train(x_train)
+    except Exception as inst:
+        print(inst.args[0])
 
 
 def run(db:  database.DBConnection, model: anomaly_detection.AnomalyDetection, queue, model_id):
@@ -21,9 +24,13 @@ def run(db:  database.DBConnection, model: anomaly_detection.AnomalyDetection, q
 
         # get features
         features = list(db.fetch_features(data_id).values())[1:]
+        try:
+            res = model.predict(features)
+            db.insert_inference(data_id, model_id, res)
+            print(f"data_id: {data_id}      inference result: {res}")
+            queue.task_done()  # Indicate completion of processing this data_id
+        except Exception as inst:
+            print(inst.args[0])
+        
 
-        res = model.predict(features)
-        db.insert_inference(data_id, model_id, res)
-        print(f"data_id: {data_id}      inference result: {res}")
-
-        queue.task_done()  # Indicate completion of processing this data_id
+        

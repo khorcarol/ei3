@@ -53,19 +53,19 @@ class Sensor:
 
     def post_http(self, index: int, payload, subindex=None):
         if subindex is not None:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port1/parameters/" + \
+            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port2/parameters/" + \
                 str(index) + "/subindices/" + str(subindex) + "/value"
         else:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port1/parameters/" + \
+            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port2/parameters/" + \
                 str(index) + "/value"
         response = requests.post(url, data=json.dumps(payload))
 
     def get_http(self, index, subindex=None):
         if subindex is not None:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port1/parameters/" + \
+            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port2/parameters/" + \
                 str(index) + "/subindices/" + str(subindex) + "/value"
         else:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port1/parameters/" + \
+            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port2/parameters/" + \
                 str(index) + '/value'
         r = requests.get(url)
         data = r.json()

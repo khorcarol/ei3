@@ -12,6 +12,8 @@ def features_plot(
         comb,
         num_cols=5
 ):
+    if len(data) == 0:
+        return fig
 
     features = list(comb[0].columns)
 
@@ -26,7 +28,7 @@ def features_plot(
     plt.tight_layout()
 
 
-def real_time_features(db, limit=10):
+def real_time_features(db, limit=100):
     fig, axes = plt.subplots(
         7, 5, figsize=(10, 10))
 
@@ -37,7 +39,7 @@ def real_time_features(db, limit=10):
         features_plot(fig, axes, latest_data_as_dataframes)
         return fig, axes
 
-    anim = FuncAnimation(fig, animate, interval=1000)  # Update every 1 second
+    anim = FuncAnimation(fig, animate, interval=1000, cache_frame_data=False)  # Update every 1 second
     plt.tight_layout()
     plt.show()
 
@@ -47,6 +49,8 @@ def spectogram_plot(
         ax,
         data: List,  # list of dataframes
 ):
+    if len(data) == 0:
+        return fig
 
     time, amplitude = range(len(data)), np.array(
         [df["spectrum"] for df in data]).transpose()
@@ -68,6 +72,6 @@ def real_time_spectrogram(db, limit = 50):
             features_dict) for features_dict in latest_data]
         spectogram_plot(fig, ax, latest_data)
         return fig, ax
-    anim = FuncAnimation(fig, animate, interval=1000)  # Update every 1 second
+    anim = FuncAnimation(fig, animate, interval=1000, cache_frame_data=False)  # Update every 1 second
     plt.tight_layout()
     plt.show()

@@ -6,6 +6,7 @@ import time
 import queue
 import sick_src.sensor as sensor
 import sick_src.database as database
+from typing import Optional, List, Dict 
 
 
 class DataAcquisition:
@@ -14,9 +15,9 @@ class DataAcquisition:
     Producer of queue for downstream feature_processing consumer.
     """
 
-    def __init__(self, sensor: sensor.Sensor, sampling_rate, db: database.DBConnection, data_dir: str = "data"):
+    def __init__(self, sensor: sensor.Sensor, sampling_rate: Optional[int] , db: database.DBConnection, data_dir: str = "data"):
         self.sensor = sensor  # Sensor object
-        self.sampling_rate = sampling_rate
+        self.sampling_rate = sampling_rate #TODO
         self.data_dir = data_dir
         self.db = db  # Database object
         self.running = False

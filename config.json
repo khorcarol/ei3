@@ -13,7 +13,7 @@
       "type": "svm",
       "parameters": {
         "kernel": "rbf",
-        "nu": 0.1
+        "nu": 0.5
       }
     }
   ]
