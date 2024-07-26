@@ -49,7 +49,7 @@ class Sensor:
                                                          }):
         self.ip_address = ip_address
         self.indices = indices
-        self.id = sensor_id
+        self.sensor_id = sensor_id
 
     def post_http(self, index: int, payload, subindex=None):
         if subindex is not None:

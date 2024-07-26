@@ -4,7 +4,7 @@
       "name": "SICK Sensor",
       "ip": "cogsihq.dyndns.org:8000",
       "id" : 1
-    }
+    }    
   ],
 
   "models": [

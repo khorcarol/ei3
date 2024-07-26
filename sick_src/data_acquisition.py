@@ -65,7 +65,8 @@ class DataAcquisition:
             self._write_data_to_file(filepath, data)
             self._write_data_to_db(data)
 
-            time.sleep(1 / self.sampling_rate)
+            if self.sampling_rate:
+                time.sleep(1 / self.sampling_rate)
 
     def _write_data_to_file(self, filepath, data):
         with open(filepath, "w") as f:
@@ -78,7 +79,7 @@ class DataAcquisition:
 
         '''
         self.db.create_tables()
-        data_id = self.db.insert_raw_data(data)
+        data_id = self.db.insert_raw_data(self.sensor.sensor_id, data= data)
 
         print(f"DataAcquisiton Producer produced data_id: {data_id}")
         self.queue.put(data_id)

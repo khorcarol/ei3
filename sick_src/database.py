@@ -32,6 +32,7 @@ class DBConnection:
         cursor.execute("""
       CREATE TABLE IF NOT EXISTS Raw_data (
         data_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sensor_id INTEGER NOT NULL,
         timestamp_from TIMESTAMP NOT NULL,
         timestamp_to TIMESTAMP NOT NULL,
         features JSONB NOT NULL,
@@ -41,6 +42,7 @@ class DBConnection:
     """)
         
         
+
         cursor.execute("""
       CREATE TABLE IF NOT EXISTS Inference (
         inference_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,7 +55,7 @@ class DBConnection:
     """)
         self.conn.commit()
 
-    def insert_raw_data(self, data: Dict[str, Union[List[float], float]]) -> int:
+    def insert_raw_data(self, sensor_id, data: Dict[str, Union[List[float], float]]) -> int:
         '''
         Inserts new record of raw data into Raw_data table in database.
 
@@ -71,9 +73,9 @@ class DBConnection:
         del data["timestamp"]
         # Assuming data dictionary has keys matching table columns
         cursor.execute("""
-      INSERT INTO Raw_data (timestamp_from, timestamp_to, features, flag)
-      VALUES (?, ?, ?, ?);
-    """, (timestamp, timestamp, json.dumps(data), data.get("flag", 0)))
+      INSERT INTO Raw_data (sensor_id, timestamp_from, timestamp_to, features, flag)
+      VALUES (?, ?, ?, ?, ?);
+    """, (sensor_id, timestamp, timestamp, json.dumps(data), data.get("flag", 0)))
         self.conn.commit()
         data_id = cursor.lastrowid
 

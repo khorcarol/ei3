@@ -13,8 +13,11 @@ pip install foobar
 ## Usage
 
 ```bash
-python -m main
+python -m main --config config.json
 ```
+To modify/ add configurations, change the config.json file.
+
+
 ## Directories
 #### data
 This contains data files and a database written to by the sensor.
