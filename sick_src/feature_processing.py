@@ -1,12 +1,12 @@
 import queue
-
+from sick_src.database import DBConnection
 
 class FeatureProcessor:
 
     def __init__(self):
         self.queue = queue.Queue()
 
-    def run(self, db, queue):
+    def run(self, db:DBConnection, queue):
         '''
         Consumer of the DataAcquisition queue. Processes the features, updates database,
         and puts into its own queue for downstream inference consumer.
@@ -29,7 +29,12 @@ class FeatureProcessor:
             db.set_processed_flag(data_id)
             queue.task_done()  # Indicate completion of processing this data_id
 
-            self.queue.put(data_id)
+            features_to_use = self.filter_features(features)
+
+            self.queue.put([data_id, features_to_use])
 
     def filter_spectrum(self, spectrum_data, min=100, max=500):
         return [spectrum_data[i] for i in range(len(spectrum_data)) if i <= max and i >= min]
+
+    def filter_features(self, features):
+        return ["kurtosis_X", "kurtosis_Y"]

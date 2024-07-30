@@ -47,7 +47,7 @@ def real_time_features(db, limit=100):
 def spectogram_plot(
         fig,
         ax,
-        data: List,  # list of dataframes
+        data: List,  # list of feature dictionaries
 ):
     if len(data) == 0:
         return fig
@@ -68,8 +68,6 @@ def real_time_spectrogram(db, limit = 50):
 
     def animate(i):
         latest_data = db.fetch_last_n_processed_features(limit)
-        latest_data_as_dataframes = [pd.DataFrame(
-            features_dict) for features_dict in latest_data]
         spectogram_plot(fig, ax, latest_data)
         return fig, ax
     anim = FuncAnimation(fig, animate, interval=1000, cache_frame_data=False)  # Update every 1 second

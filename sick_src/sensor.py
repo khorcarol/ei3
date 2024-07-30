@@ -1,14 +1,15 @@
+import time
 import requests
 import json
 from typing import Dict, Any, Tuple, List, Union
-from sick_src.conversion import bytes_to_float32, bytes_to_int16
+from sick_src.conversion import bytes_to_float32, bytes_to_int16, bytes_to_int16_be
 
 
 class Sensor:
     """
     A class for interacting with sensor.
     """
-    def __init__(self, sensor_id, ip_address="cogsihq.dyndns.org:8000", indices={"kurtosis_X": (4495, 1),
+    def __init__(self, sensor_id, port, ip_address="cogsihq.dyndns.org:8000", indices={"kurtosis_X": (4495, 1),
                                                          "kurtosis_Y": (4495, 2),
                                                          "kurtosis_Z": (4495, 3),
 
@@ -50,23 +51,30 @@ class Sensor:
         self.ip_address = ip_address
         self.indices = indices
         self.sensor_id = sensor_id
+        self.port = port
 
     def post_http(self, index: int, payload, subindex=None):
+        time.sleep(0.05)
+
         if subindex is not None:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port2/parameters/" + \
+            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
                 str(index) + "/subindices/" + str(subindex) + "/value"
         else:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port2/parameters/" + \
+            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
                 str(index) + "/value"
+        print(url)
         response = requests.post(url, data=json.dumps(payload))
 
     def get_http(self, index, subindex=None):
+        time.sleep(0.05)
+
         if subindex is not None:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port2/parameters/" + \
+            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
                 str(index) + "/subindices/" + str(subindex) + "/value"
         else:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port2/parameters/" + \
+            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
                 str(index) + '/value'
+        print(url)
         r = requests.get(url)
         data = r.json()
         return data["value"]
@@ -79,7 +87,8 @@ class Sensor:
         '''
 
         res = {}
-        res.update(self.get_sensor_fft())
+        # res.update(self.get_sensor_fft())
+        res.update(self.get_raw_data_all_axis())
         res.update(self.get_sensor_features())
         return res
 
@@ -96,6 +105,7 @@ class Sensor:
 
         spectrum = []
         for i in range(nr_of_segments):
+            time.sleep(0.5)  # TODO
             data = self.get_http(4590)
             for i in range(0, len(data), 4):
                 res = bytes_to_float32(data[i:i+4])
@@ -105,8 +115,37 @@ class Sensor:
         self.post_http(4585, payload={"value": [0]})
         return {"spectrum": spectrum, "freq_incr": freq_incr}
 
-    def get_sensor_raw():
-        return
+    def get_raw_data_by_axis(self,axis: int):
+        self.post_http(4585, payload={"value": [1]})
+        v = [0]
+        while v != [1]:
+            v = self.get_http(4586, 1)
+        self.post_http(4587, payload={"value": [axis]}, subindex=2)
+        self.post_http(4587, payload={"value": [0]}, subindex=1)
+
+        raw_data_nr_segments = self.get_http(4586, subindex=3)[0]
+        nr_points = bytes_to_int16(self.get_http(4586, subindex=2))
+
+        spectrum = []
+        for n in range(raw_data_nr_segments):
+            time.sleep(0.5)#TODO
+            data = self.get_http(4588)
+            for i in range(0, len(data), 2):
+
+                spectrum.append(bytes_to_int16_be(data[i:i+2]) * 244/1e6)
+        self.post_http(4585, payload={"value": [0]})
+
+        return spectrum[:nr_points]
+
+
+    def get_raw_data_all_axis(self,):
+        return {
+            "acc_X": self.get_raw_data_by_axis(axis=1),
+            "acc_Y": self.get_raw_data_by_axis(axis=2),
+            "acc_Z": self.get_raw_data_by_axis(axis=3)
+
+        }
+
 
     def get_sensor_features(self) -> Dict[str, int]:
         res = {}

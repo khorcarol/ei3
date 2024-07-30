@@ -26,40 +26,41 @@ class DataAcquisition:
 
         os.makedirs(self.data_dir, exist_ok=True)
 
-    def start_acquisition(self):
-        """
-        Starts the data acquisition thread.
-        """
-        if self.running:
-            print("Data acquisition already running.")
-            return
+    # def start_acquisition(self):
+    #     """
+    #     Starts the data acquisition thread.
+    #     """
+    #     if self.running:
+    #         print("Data acquisition already running.")
+    #         return
 
-        self.running = True
-        self.thread = threading.Thread(target=self._acquisition_loop)
-        self.thread.start()
+    #     self.running = True
+    #     self.thread = threading.Thread(target=self._acquisition_loop)
+    #     self.thread.start()
 
-    def stop_acquisition(self):
-        """
-        Stops the data acquisition thread.
-        """
-        if not self.running:
-            print("Data acquisition not running.")
-            return
+    # def stop_acquisition(self):
+    #     """
+    #     Stops the data acquisition thread.
+    #     """
+    #     if not self.running:
+    #         print("Data acquisition not running.")
+    #         return
 
-        self.running = False
-        self.thread.join()  # Wait for the thread to finish
+    #     self.running = False
+    #     self.thread.join()  # Wait for the thread to finish
 
     def _acquisition_loop(self):
         """
         Internal loop that continuously reads data from the sensor, records the time, and writes them to a file and database.
         """
-        while self.running:
+        while True:
             data = self.sensor.get_sensor_data()
             timestamp = str(
                 datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
             data["timestamp"] = timestamp
+            sensor_id = self.sensor.sensor_id
 
-            filename = f"{timestamp}.json"
+            filename = f"s{sensor_id}-{timestamp}.json"
             filepath = os.path.join(self.data_dir, filename)
 
             self._write_data_to_file(filepath, data)

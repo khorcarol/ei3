@@ -17,6 +17,9 @@ python -m main --config config.json
 ```
 To modify/ add configurations, change the config.json file.
 
+```bash
+python -m pytest 
+```
 
 ## Directories
 #### data
