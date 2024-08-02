@@ -54,30 +54,39 @@ class Sensor:
         self.port = port
 
     def post_http(self, index: int, payload, subindex=None):
-        time.sleep(0.05)
+        while True:
+            try:
 
-        if subindex is not None:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
-                str(index) + "/subindices/" + str(subindex) + "/value"
-        else:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
-                str(index) + "/value"
-        print(url)
-        response = requests.post(url, data=json.dumps(payload))
+                if subindex is not None:
+                    url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
+                        str(index) + "/subindices/" + str(subindex) + "/value"
+                else:
+                    url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
+                        str(index) + "/value"
+                response = requests.post(url, data=json.dumps(payload))
+                print(url)
+                return
+            except:
+                print("Retrying")
+                time.sleep(0.1)
 
     def get_http(self, index, subindex=None):
-        time.sleep(0.05)
-
-        if subindex is not None:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
-                str(index) + "/subindices/" + str(subindex) + "/value"
-        else:
-            url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
-                str(index) + '/value'
-        print(url)
-        r = requests.get(url)
-        data = r.json()
-        return data["value"]
+        while True:
+            try:
+                if subindex is not None:
+                    url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
+                        str(index) + "/subindices/" + str(subindex) + "/value"
+                else:
+                    url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
+                        str(index) + '/value'
+                
+                r = requests.get(url)
+                print(url)
+                data = r.json()
+                return data["value"]
+            except:
+                print("Retrying")
+                time.sleep(0.1)
 
     def get_sensor_data(self) -> Dict[str, Union[List[int], int]]:
         '''
