@@ -20,7 +20,9 @@ To modify/ add configurations, change the config.json file.
 ```bash
 python -m pytest 
 ```
-
+```bash
+streamlit run web_app/web.py
+```
 ## Directories
 #### data
 This contains data files and a database written to by the sensor.

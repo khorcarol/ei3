@@ -156,7 +156,7 @@ class DBConnection:
         """,
             self.conn,
         )
-        df = pd.DataFrame(sql_query, columns=["data_id", "timestamp_from",
+        df = pd.DataFrame(sql_query, columns=["data_id", "sensor_id","timestamp_from",
                                               "timestamp_to",
                                               "features",
                                               "flag",
