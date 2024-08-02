@@ -2,9 +2,9 @@
   "sensors": [
     {
       "name": "SICK Sensor",
-      "ip": "cogsihq.dydns.org:8000",
+      "ip": "cogsihq.dyndns.org:8000",
       "id" : 1,
-      "port": "1"
+      "port": "5"
     }            
   ],
 

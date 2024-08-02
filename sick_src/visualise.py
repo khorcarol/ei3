@@ -12,7 +12,7 @@ def features_plot(
         comb,
         num_cols=5
 ):
-    if len(data) == 0:
+    if len(comb) == 0:
         return fig
 
     features = list(comb[0].columns)

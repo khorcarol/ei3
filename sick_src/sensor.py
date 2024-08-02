@@ -64,7 +64,7 @@ class Sensor:
                     url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
                         str(index) + "/value"
                 response = requests.post(url, data=json.dumps(payload))
-                print(url)
+                # print(url)
                 return
             except:
                 print("Retrying")
@@ -81,7 +81,7 @@ class Sensor:
                         str(index) + '/value'
                 
                 r = requests.get(url)
-                print(url)
+                # print(url)
                 data = r.json()
                 return data["value"]
             except:
@@ -96,8 +96,8 @@ class Sensor:
         '''
 
         res = {}
-        # res.update(self.get_sensor_fft())
-        res.update(self.get_raw_data_all_axis())
+        res.update(self.get_sensor_fft())
+        # res.update(self.get_raw_data_all_axis())
         res.update(self.get_sensor_features())
         return res
 
@@ -114,7 +114,6 @@ class Sensor:
 
         spectrum = []
         for i in range(nr_of_segments):
-            time.sleep(0.5)  # TODO
             data = self.get_http(4590)
             for i in range(0, len(data), 4):
                 res = bytes_to_float32(data[i:i+4])
@@ -137,7 +136,6 @@ class Sensor:
 
         spectrum = []
         for n in range(raw_data_nr_segments):
-            time.sleep(0.5)#TODO
             data = self.get_http(4588)
             for i in range(0, len(data), 2):
 

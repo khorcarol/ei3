@@ -42,18 +42,22 @@ def sensor_run(sensor_id, sensor_ip, sensor_port, model_id, model_kernel, model_
                                        args=(db_2, data_acquisitio_obj.queue,))
     feature_processing_thread.start()
 
+    db_5 = database.DBConnection(db_file)
+    feature_selection_obj = feature_selection.FeatureSelector()
+    feature_selection_thread = Thread(target = feature_selection_obj.feature_select, args=(db_5, sensor_id))
+    feature_selection_thread.start()
+    
     db_3 = database.DBConnection(db_file)
     model = one_class_svm.OneClassSVMDetector(model_id, model_kernel, model_nu)
-
-    features = feature_selection.feature_select()
-    inference.batch_train(db_3, model, features)
     inference_thread = Thread(target=inference.run, args=(
-        db_3, model, feature_processing_obj.queue, model_id, features))
+        db_3, model, feature_processing_obj.queue, model_id, feature_selection_obj))
     inference_thread.start()
 
     db_4 = database.DBConnection(db_file)
-    visualise.real_time_spectrogram(sensor_id, db_4)
-    visualise.real_time_features(sensor_id, db_4)
+    visualise.real_time_spectrogram(db=db_4, sensor_id=sensor_id)
+    visualise.real_time_features(db=db_4, sensor_id=sensor_id)
+
+
 
 
 for i in range(len(sensors)):
