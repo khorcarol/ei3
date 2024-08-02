@@ -123,9 +123,9 @@ class DBConnection:
         features = json.loads(features_json)
         return features
 
-    def fetch_last_n_processed_features(self, limit: int) -> List[Dict[str, Union[List[float], float]]]:
+    def fetch_last_n_processed_features(self, sensorid, limit: int) -> List[Dict[str, Union[List[float], float]]]:
         '''
-        Get most recent n entries in the Raw_data table.
+        Get most recent n entries in the Raw_data table for specified sensor id.
 
         Args:
             limit     : number of most recent entries to fetch
@@ -136,7 +136,7 @@ class DBConnection:
 
         cursor = self.cursor
         cursor.execute(f"""
-        SELECT features FROM Raw_data WHERE flag = 1 ORDER BY data_id DESC LIMIT {limit}
+        SELECT features FROM Raw_data WHERE flag = 1 AND sensor_id = {sensorid} ORDER BY data_id DESC LIMIT {limit}
         """)
         features_json = cursor.fetchall()
         features = [json.loads(tupl[0]) for tupl in features_json]

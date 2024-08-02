@@ -28,12 +28,12 @@ def features_plot(
     plt.tight_layout()
 
 
-def real_time_features(db, limit=100):
+def real_time_features(db:database.DBConnection,sensor_id, limit=100):
     fig, axes = plt.subplots(
         7, 5, figsize=(10, 10))
 
     def animate(i):
-        latest_data = db.fetch_last_n_processed_features(limit)
+        latest_data = db.fetch_last_n_processed_features(sensor_id, limit)
         latest_data_as_dataframes = [pd.DataFrame(
             features_dict) for features_dict in latest_data]
         features_plot(fig, axes, latest_data_as_dataframes)
@@ -61,13 +61,13 @@ def spectogram_plot(
     return fig
 
 
-def real_time_spectrogram(db, limit = 50):
+def real_time_spectrogram(db:database.DBConnection, sensor_id, limit = 50):
     fig, ax = plt.subplots()
     im = ax.pcolormesh([0], [0], [[0]], shading="nearest")
     cb =fig.colorbar(im)
 
     def animate(i):
-        latest_data = db.fetch_last_n_processed_features(limit)
+        latest_data = db.fetch_last_n_processed_features(sensor_id, limit)
         spectogram_plot(fig, ax, latest_data)
         return fig, ax
     anim = FuncAnimation(fig, animate, interval=1000, cache_frame_data=False)  # Update every 1 second

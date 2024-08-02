@@ -1,5 +1,5 @@
 from sick_src import visualise
-from sick_src import sensor, data_acquisition, database, feature_processing, inference
+from sick_src import sensor, data_acquisition, database, feature_processing, inference, feature_selection
 from threading import Thread
 import time
 from model import one_class_svm
@@ -36,23 +36,24 @@ def sensor_run(sensor_id, sensor_ip, sensor_port, model_id, model_kernel, model_
     data_acquisitio_thread = Thread(target=data_acquisitio_obj._acquisition_loop)
     data_acquisitio_thread.start()
 
-    # db_2 = database.DBConnection(db_file)
-    # feature_processing_obj = feature_processing.FeatureProcessor()
-    # feature_processing_thread = Thread(target=feature_processing_obj.run,
-    #                                    args=(db_2, data_acquisitio_obj.queue,))
-    # feature_processing_thread.start()
+    db_2 = database.DBConnection(db_file)
+    feature_processing_obj = feature_processing.FeatureProcessor()
+    feature_processing_thread = Thread(target=feature_processing_obj.run,
+                                       args=(db_2, data_acquisitio_obj.queue,))
+    feature_processing_thread.start()
 
-    # db_3 = database.DBConnection(db_file)
-    # model = one_class_svm.OneClassSVMDetector(model_id, model_kernel, model_nu)
+    db_3 = database.DBConnection(db_file)
+    model = one_class_svm.OneClassSVMDetector(model_id, model_kernel, model_nu)
 
-    # inference.batch_train(db_3, model)
-    # inference_thread = Thread(target=inference.run, args=(
-    #     db_3, model, feature_processing_obj.queue, model_id))
-    # inference_thread.start()
+    features = feature_selection.feature_select()
+    inference.batch_train(db_3, model, features)
+    inference_thread = Thread(target=inference.run, args=(
+        db_3, model, feature_processing_obj.queue, model_id, features))
+    inference_thread.start()
 
-    # db_4 = database.DBConnection(db_file)
-    # visualise.real_time_spectrogram(db_4)
-    # visualise.real_time_features(db_4)
+    db_4 = database.DBConnection(db_file)
+    visualise.real_time_spectrogram(sensor_id, db_4)
+    visualise.real_time_features(sensor_id, db_4)
 
 
 for i in range(len(sensors)):

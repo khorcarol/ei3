@@ -59,7 +59,7 @@ def test_update_raw_data(db):
     assert updated_features == new_features
 
 
-def test_fetch_last_n_processed_features(db):
+def test_fetch_last_n_processed_features(db:DBConnection):
     data1 = {"timestamp": str(datetime.now().strftime("%Y-%m-%d_%H-%M-%S")), "feature1": [
         1.0], "feature2": 1.0, "flag": 1}
     data2 = {"timestamp": str(datetime.now().strftime("%Y-%m-%d_%H-%M-%S")), "feature1": [
@@ -67,8 +67,11 @@ def test_fetch_last_n_processed_features(db):
     sensor_id = 1
     data_id = db.insert_raw_data(sensor_id, data1)
     data_id = db.insert_raw_data(sensor_id , data2)
-    features = db.fetch_last_n_processed_features(2)
+    features = db.fetch_last_n_processed_features(sensorid= 1, limit= 2)
     assert len(features) == 2
+    
+    features = db.fetch_last_n_processed_features(sensorid= 2, limit=2)
+    assert len(features) == 0
 
 
 def test_fetch_all_to_df(db:DBConnection):

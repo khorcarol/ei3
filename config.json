@@ -2,28 +2,10 @@
   "sensors": [
     {
       "name": "SICK Sensor",
-      "ip": "10.0.0.20",
+      "ip": "cogsihq.dydns.org:8000",
       "id" : 1,
       "port": "1"
-    },
-     {
-      "name": "SICK Sensor2",
-      "ip": "10.0.0.20",
-      "id" : 2,
-      "port": "2"
-    }  ,
-    {
-      "name": "SICK Sensor3",
-      "ip": "10.0.0.20",
-      "id" : 3,
-      "port": "3"
-    },
-     {
-      "name": "SICK Sensor4",
-      "ip": "10.0.0.20",
-      "id" : 4,
-      "port": "4"
-    }              
+    }            
   ],
 
   "models": [
