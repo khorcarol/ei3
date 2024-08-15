@@ -59,7 +59,6 @@ def sensor_run(sensor_id, sensor_ip, sensor_port, model_id, model_kernel, model_
 
 
 
-
 for i in range(len(sensors)):
     sensor_id = config['sensors'][i]['id']
     sensor_ip = config['sensors'][i]['ip']

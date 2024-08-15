@@ -64,7 +64,7 @@ def real_time_plots(db, sensor_id, limit=50, num_cols=5):
         st.pyplot(fig_spectrogram)
         st.pyplot(fig_features)
         time.sleep(1)
-        st.rerun()
+        st.experimental_rerun()
 
 # Streamlit app
 st.title('Live Dashboard')
