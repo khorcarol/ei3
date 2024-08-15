@@ -54,10 +54,6 @@ def sensor_run(sensor_id, sensor_ip, sensor_port, model_id, model_kernel, model_
     inference_thread.start()
 
     db_4 = database.DBConnection(db_file)
-    # visualise.real_time_spectrogram(db=db_4, sensor_id=sensor_id)
-    # visualise.real_time_features(db=db_4, sensor_id=sensor_id)
-
-
 
 for i in range(len(sensors)):
     sensor_id = config['sensors'][i]['id']
