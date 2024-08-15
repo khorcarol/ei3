@@ -24,4 +24,4 @@ To run database unit testing,
  -   `sensor.py` has all the device specific code such as accessing indices for the spectrum readout 
  
  #### model 
- This is where machine learning models can be added.
+ This is where machine learning models can be added. Currently running one class svm, batch training on all available data and testing on new data point to make inference.
