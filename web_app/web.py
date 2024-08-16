@@ -44,7 +44,7 @@ def features_plot(fig, axes, comb, num_cols=5):
     return fig
 
 
-def real_time_plots(db, sensor_id, limit=50, num_cols=5):
+def real_time_plots(db:DBConnection, sensor_id, limit=50, num_cols=5):
     # Setup for spectrogram plot
     fig_spectrogram, ax_spectrogram = plt.subplots(figsize=(10, 5))
 
@@ -63,7 +63,7 @@ def real_time_plots(db, sensor_id, limit=50, num_cols=5):
 
         st.pyplot(fig_spectrogram)
         st.pyplot(fig_features)
-        time.sleep(1)
+        time.sleep(5)
         st.experimental_rerun()
 
 # Streamlit app
