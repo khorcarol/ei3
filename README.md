@@ -5,7 +5,7 @@ SICK is package to interface with SICK sensor and automate the data analysis wor
 2. Dependencies installed as per ```requirements.txt``` 
 ## Usage
  To modify/ add configurations, change the config.json file. 
- ```bash python -m main --config config.json ```
+ ```python -m main --config config.json ```
 
 To run database unit testing, 
 ```python -m pytest ``` 
