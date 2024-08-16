@@ -10,7 +10,7 @@ SICK is package to interface with SICK sensor and automate the data analysis wor
 To run database unit testing, 
 ```bash python -m pytest ``` 
 
-To run visualisation,
+To run visualisation, (UNSTABLE)
 ```python -m streamlit run web_app/web.py```
 Currently only supports running if we are solely recording spectrum and features, (not recording the acceleration data).
 
