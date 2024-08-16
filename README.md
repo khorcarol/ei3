@@ -8,7 +8,7 @@ SICK is package to interface with SICK sensor and automate the data analysis wor
  ```bash python -m main --config config.json ```
 
 To run database unit testing, 
-```bash python -m pytest ``` 
+```python -m pytest ``` 
 
 To run visualisation, (UNSTABLE)
 ```python -m streamlit run web_app/web.py```

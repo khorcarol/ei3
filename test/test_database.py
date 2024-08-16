@@ -82,8 +82,9 @@ def test_fetch_all_to_df(db:DBConnection):
     sensor_id = 1
     data_id = db.insert_raw_data(sensor_id, data)
     df = db.fetch_all_to_df()
+    print(df.columns)
     assert len(df) == 1, "DataFrame should have one row"
-    assert set(df.columns) == {"data_id", "timestamp_from", "timestamp_to",
+    assert set(df.columns) == {"data_id", "sensor_id", "timestamp_from", "timestamp_to",
                                "features", "flag", "annotated"}, "DataFrame columns mismatch"
 
 
