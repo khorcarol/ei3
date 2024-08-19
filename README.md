@@ -18,6 +18,7 @@ SICK is package to interface with SICK sensor and automate the data analysis wor
 
 
 3. Dependencies installed with \
+`cd ei3`
 `pip install -r requirements.txt`
 
 ## Usage
