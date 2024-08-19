@@ -72,6 +72,7 @@ def real_time_plots(db:DBConnection, sensor_id, limit=50, num_cols=5):
 st.title('Live Dashboard')
 
 data = db.fetch_all_to_df()
+
 sensor_options = pd.unique(data["sensor_id"])
 sensor_id = st.selectbox('Select Sensor ID', sensor_options)
 

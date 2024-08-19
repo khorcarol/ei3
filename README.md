@@ -1,11 +1,23 @@
 # SICK 
 SICK is package to interface with SICK sensor and automate the data analysis workflow. 
 ## Installation 
-1. RevPi with python3.7 opened as a virtual environment. 
+1. Install python3.7.3 (untested)\
+`sudo apt install software-properties-common `\
+`sudo add-apt-repository ppa:deadsnakes/ppa`\
+`sudo apt update`\
+`sudo apt install python3.7`
+2. Open virtual environment with python3.7. \
+`pip3.7 install virtualenv`\
+`python3.7 -m virtualenv python3.7env`
+`source python3.7env/bin/activate`
+
 2. Dependencies installed as per ```requirements.txt``` 
+with \
+`pip install -r requirements.txt`
 ## Usage
  To modify/ add configurations, change the config.json file. 
- ```python -m main --config config.json ```
+
+ To run, use ```python -m main --config config.json ```
 
 To run database unit testing, 
 ```python -m pytest ``` 
