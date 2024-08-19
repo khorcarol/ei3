@@ -1,19 +1,25 @@
 # SICK 
 SICK is package to interface with SICK sensor and automate the data analysis workflow. 
 ## Installation 
-1. Install python3.7.3 (untested)\
-`sudo apt install software-properties-common `\
-`sudo add-apt-repository ppa:deadsnakes/ppa`\
-`sudo apt update`\
-`sudo apt install python3.7`
-2. Open virtual environment with python3.7. \
-`pip3.7 install virtualenv`\
-`python3.7 -m virtualenv python3.7env`
-`source python3.7env/bin/activate`
+1. Reformat Pi by downloading new image onto Pi, which should include python3.11.
+- Download Raspberry Pi Imager
+- Use Raspberry Pi model 5, 32 bit
+- Allow SSH
+- Find out its IP by running IP search on local Wifi
 
-2. Dependencies installed as per ```requirements.txt``` 
-with \
+2. Open virtual environment with python3.11 (should be default on the Pi) \
+`python3 -m venv python3.11`\
+`source python3.11/bin/activate`
+
+3. Get source code with
+`git clone https://khorcarol@github.com/khorcarol/ei3.git`
+
+4. Run `sudo apt-get install libopenblas-dev`
+
+
+3. Dependencies installed with \
 `pip install -r requirements.txt`
+
 ## Usage
  To modify/ add configurations, change the config.json file. 
 
@@ -24,7 +30,7 @@ To run database unit testing,
 
 To run visualisation, (UNSTABLE)
 ```python -m streamlit run web_app/web.py```
-Currently only supports running if we are solely recording spectrum and features, (not recording the acceleration data).
+Currently only supports running only on laptop, if we are solely recording spectrum and features, (not recording the acceleration data).
 
 ## Directories
 
