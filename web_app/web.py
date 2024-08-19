@@ -17,6 +17,8 @@ def spectrogram_plot(fig, ax, data: List):
     time, amplitude = range(len(data)), np.array(
         [df["spectrum"] for df in data]).transpose()
     freq = np.arange(len(data[0]["spectrum"])) * data[0]["freq_incr"]
+    # print(amplitude.shape)
+    # print(amplitude)
 
     ax.clear()
     im = ax.pcolormesh(time, freq, amplitude, shading="nearest")

@@ -25,7 +25,7 @@ Currently only supports running if we are solely recording spectrum and features
  This contains the source code for the data acquisition, database handling, feature processing, inferencing, sensor interfacing and visualisation. 
  - `conversion.py` handles conversion from byte encoded data into floats and integers as required 
  -  `data_acquisition.py` acquires data from a sensor and writes data to a local file and database. 
- -   `sensor.py` has all the device specific code such as accessing indices for the spectrum readout 
+ -   `sensor.py` has all the device specific code such as accessing indices for the spectrum readout. This is where you can choose which sensor data you want (eg raw data from all axis, fft, sensor features)
  
  #### model 
  This is where machine learning models can be added. Currently running one class svm, batch training on all available data and testing on new data point to make inference.
