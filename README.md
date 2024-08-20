@@ -7,18 +7,19 @@ SICK is package to interface with SICK sensor and automate the data analysis wor
 - Allow SSH
 - Find out its IP by running IP search on local Wifi
 
-2. Open virtual environment with python3.11 (should be default on the Pi) \
+2. Get source code with
+`git clone https://khorcarol@github.com/khorcarol/ei3.git`
+
+3. Run `sudo apt-get install libopenblas-dev`
+
+4. Change directory into code folder \
+`cd ei3`
+
+5. Open virtual environment with python3.11 (should be default on the Pi) \
 `python3 -m venv python3.11`\
 `source python3.11/bin/activate`
 
-3. Get source code with
-`git clone https://khorcarol@github.com/khorcarol/ei3.git`
-
-4. Run `sudo apt-get install libopenblas-dev`
-
-
-3. Dependencies installed with \
-`cd ei3`
+6.Dependencies installed with \
 `pip install -r requirements.txt`
 
 ## Usage
@@ -32,6 +33,7 @@ To run database unit testing,
 To run visualisation, (UNSTABLE)
 ```python -m streamlit run web_app/web.py```
 Currently only supports running only on laptop, if we are solely recording spectrum and features, (not recording the acceleration data).
+
 
 ## Directories
 
