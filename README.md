@@ -27,11 +27,11 @@ SICK is package to interface with SICK sensor and automate the data analysis wor
  
  To run, use ```python -m main --config config.json ```
  
-To establish persistent connection and run, use 
- ```sudo apt install tmux ```
- ``` tmux```
- ```python -m main --config config.json ```
- To detach from current session, press Ctrl+B then D
+To establish persistent connection and run, use \
+ ```sudo apt install tmux ```\
+ ``` tmux```\
+ ```python -m main --config config.json ```\
+ To detach from current session, press Ctrl+B then D\
  To reattach, use ``` tmux attach```
 
 To run database unit testing, 
