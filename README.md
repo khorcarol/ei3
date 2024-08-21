@@ -50,3 +50,13 @@ Currently only supports running only on laptop, if we are solely recording spect
  
  #### model 
  This is where machine learning models can be added. Currently running one class svm, batch training on all available data and testing on new data point to make inference.
+
+
+
+## Troubleshooting
+``` Exception("No training data provided.") ```
+Label accordingly the collected data in the database. If not known, label all as 0 and run unsupervised models.
+
+```KeyError: 'spectrum'```
+Reason: feature processor trying to filter features based on spectrum, but user is not collecting FFT data.
+Solution: enable FFT data collection/ change feature processor
