@@ -24,8 +24,15 @@ SICK is package to interface with SICK sensor and automate the data analysis wor
 
 ## Usage
  To modify/ add configurations, change the config.json file. 
-
+ 
  To run, use ```python -m main --config config.json ```
+ 
+To establish persistent connection and run, use 
+ ```sudo apt install tmux ```
+ ``` tmux```
+ ```python -m main --config config.json ```
+ To detach from current session, press Ctrl+B then D
+ To reattach, use ``` tmux attach```
 
 To run database unit testing, 
 ```python -m pytest ``` 
@@ -54,9 +61,9 @@ Currently only supports running only on laptop, if we are solely recording spect
 
 
 ## Troubleshooting
-``` Exception("No training data provided.") ```
+``` Exception("No training data provided.") ```\
 Label accordingly the collected data in the database. If not known, label all as 0 and run unsupervised models.
 
-```KeyError: 'spectrum'```
+```KeyError: 'spectrum'```\
 Reason: feature processor trying to filter features based on spectrum, but user is not collecting FFT data.
 Solution: enable FFT data collection/ change feature processor
