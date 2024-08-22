@@ -64,7 +64,7 @@ class Sensor:
                     url = "http://" + self.ip_address + "/iolink/v1/devices/master1port" + self.port + "/parameters/" + \
                         str(index) + "/value"
                 response = requests.post(url, data=json.dumps(payload))
-                # print(url)
+                print(url)
                 return
             except:
                 print("Retrying")
@@ -81,7 +81,7 @@ class Sensor:
                         str(index) + '/value'
                 
                 r = requests.get(url)
-                # print(url)
+                print(url)
                 data = r.json()
                 return data["value"]
             except:
